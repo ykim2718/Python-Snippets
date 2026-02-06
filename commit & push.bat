@@ -1,13 +1,20 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM === 1. Generate timestamp for commit message ===
-for /f "tokens=1-4 delims=/ " %%a in ("%date%") do (
-    set TODAY=%%a-%%b-%%c
-)
-for /f "tokens=1-2 delims=:." %%a in ("%time%") do (
-    set NOWTIME=%%a-%%b
-)
+REM === 1. Build date string: YYYY-MM-DD ===
+set YYYY=%date:~0,4%
+set MM=%date:~5,2%
+set DD=%date:~8,2%
+set TODAY=%YYYY%-%MM%-%DD%
+
+REM === 2. Build time string: HH-MM-SS (handle leading space) ===
+set HOUR=%time:~0,2%
+if "%HOUR:~0,1%"==" " set HOUR=0%HOUR:~1,1%
+set MIN=%time:~3,2%
+set SEC=%time:~6,2%
+set NOWTIME=%HOUR%-%MIN%-%SEC%
+
+REM === 3. Combine ===
 set NOW=%TODAY%_%NOWTIME%
 
 echo Commit message: Auto commit at %NOW%
@@ -44,7 +51,7 @@ REM === 6. Add remote origin only if it does not exist ===
 git remote | find "origin" >nul
 if %errorlevel% neq 0 (
     echo Adding remote origin...
-    git remote add origin https://github.com/ykim2718/Python.git
+    git remote add origin https://github.com/ykim2718/Python-Snippets.git
 )
 
 REM === 7. Push to remote ===
